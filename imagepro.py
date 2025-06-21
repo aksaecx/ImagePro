@@ -160,3 +160,103 @@ class ImagePro:
                 self.status_label.config(text=f"Loaded: {file_path.split('/')[-1]}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load image: {str(e)}")
+
+# ======================== BAGIAN 2 (Kontributor 2) ========================
+# GUI Setup dan Image Loading (101-200)
+        # Processing section
+        process_frame = ttk.LabelFrame(main_frame, text=" Processing Tools ", style='Section.TLabelframe')
+        process_frame.grid(row=2, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 15))
+        
+        # Basic Operations
+        basic_frame = ttk.LabelFrame(process_frame, text="Basic Operations")
+        basic_frame.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        
+        btn_gray = ttk.Button(basic_frame, text="Grayscale", command=self.convert_grayscale)
+        btn_gray.grid(row=0, column=0, padx=5, pady=5)
+        
+        btn_binary = ttk.Button(basic_frame, text="Binary", command=self.convert_binary)
+        btn_binary.grid(row=0, column=1, padx=5, pady=5)
+        
+        btn_arith = ttk.Button(basic_frame, text="Arithmetic", command=self.arithmetic_operations)
+        btn_arith.grid(row=0, column=2, padx=5, pady=5)
+        
+        btn_logic = ttk.Button(basic_frame, text="Logic", command=self.logic_operations)
+        btn_logic.grid(row=0, column=3, padx=5, pady=5)
+        
+        # Advanced Operations
+        adv_frame = ttk.LabelFrame(process_frame, text="Advanced Operations")
+        adv_frame.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        
+        btn_hist = ttk.Button(adv_frame, text="Histogram", command=self.show_histogram)
+        btn_hist.grid(row=0, column=0, padx=5, pady=5)
+        
+        btn_conv = ttk.Button(adv_frame, text="Convolution", command=self.convolution_filter)
+        btn_conv.grid(row=0, column=1, padx=5, pady=5)
+        
+        btn_morph = ttk.Button(adv_frame, text="Morphology", command=self.morphology_operations)
+        btn_morph.grid(row=0, column=2, padx=5, pady=5)
+        
+        btn_reset = ttk.Button(adv_frame, text="Reset", command=self.reset_image)
+        btn_reset.grid(row=0, column=3, padx=5, pady=5)
+        
+        # Display section
+        display_frame = ttk.Frame(main_frame)
+        display_frame.grid(row=3, column=0, columnspan=3, sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        # Original image
+        original_frame = ttk.LabelFrame(display_frame, text=" Original Image ", style='Section.TLabelframe')
+        original_frame.grid(row=0, column=0, padx=(0, 10), sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        self.original_canvas = tk.Canvas(original_frame, width=400, height=400, bg="white", bd=2, relief="groove")
+        self.original_canvas.pack(padx=10, pady=10)
+        
+        # Processed image
+        processed_frame = ttk.LabelFrame(display_frame, text=" Processed Image ", style='Section.TLabelframe')
+        processed_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        self.processed_canvas = tk.Canvas(processed_frame, width=400, height=400, bg="white", bd=2, relief="groove")
+        self.processed_canvas.pack(padx=10, pady=10)
+        
+        # Status bar
+        status_frame = ttk.Frame(main_frame)
+        status_frame.grid(row=4, column=0, columnspan=3, sticky=(tk.W, tk.E))
+        
+        self.status_label = ttk.Label(status_frame, text="Ready", relief=tk.SUNKEN, anchor=tk.W)
+        self.status_label.pack(fill=tk.X)
+        
+        # Configure grid weights
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure(0, weight=1)
+        main_frame.columnconfigure(0, weight=1)
+        main_frame.rowconfigure(3, weight=1)
+        display_frame.columnconfigure(0, weight=1)
+        display_frame.columnconfigure(1, weight=1)
+        display_frame.rowconfigure(0, weight=1)
+        
+        # Custom style for accent button
+        self.style.configure('Accent.TButton', 
+                           font=('Helvetica', 10, 'bold'),
+                           foreground='white',
+                           background='#3498db',
+                           padding=8)
+        self.style.map('Accent.TButton',
+                     foreground=[('active', 'white'), ('!active', 'white')],
+                     background=[('active', '#2980b9'), ('!active', '#3498db')])
+    
+    def load_image(self):
+        """Load image from file"""
+        file_path = filedialog.askopenfilename(
+            title="Select Image",
+            filetypes=[("Image files", "*.jpg *.jpeg *.png *.bmp *.tiff *.tif")]
+        )
+        
+        if file_path:
+            try:
+                self.original_image = cv2.imread(file_path)
+                self.current_image = self.original_image.copy()
+                short_path = file_path.split('/')[-1][:30] + "..." if len(file_path.split('/')[-1]) > 30 else file_path.split('/')[-1]
+                self.file_label.config(text=f"Loaded: {short_path}")
+                self.display_image(self.original_image, self.original_canvas)
+                self.status_label.config(text=f"Loaded: {file_path.split('/')[-1]}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to load image: {str(e)}")
