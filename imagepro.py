@@ -354,4 +354,219 @@ class ImagePro:
         ttk.Button(dialog, text="Decrease Brightness (-50)", command=brightness_decrease).pack(pady=5)
         ttk.Button(dialog, text="Multiply (×1.5)", command=multiply).pack(pady=5)
 
+# ======================== BAGIAN 4 (Kontributor 4) ========================
+# Advanced Image Processing dan Main Function (301-end)
+    def logic_operations(self):
+        """Perform logic operations"""
+        if self.original_image is None:
+            messagebox.showwarning("Warning", "Please select an image first!")
+            return
+            
+        # Create a simple dialog for logic operations
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Logic Operations")
+        dialog.geometry("300x200")
+        
+        ttk.Label(dialog, text="Select logic operation:").pack(pady=10)
+        
+        def bitwise_and():
+            mask = np.ones(self.original_image.shape, dtype=np.uint8) * 200
+            result = cv2.bitwise_and(self.original_image, mask)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def bitwise_or():
+            mask = np.ones(self.original_image.shape, dtype=np.uint8) * 50
+            result = cv2.bitwise_or(self.original_image, mask)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def bitwise_not():
+            result = cv2.bitwise_not(self.original_image)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        ttk.Button(dialog, text="AND Operation", command=bitwise_and).pack(pady=5)
+        ttk.Button(dialog, text="OR Operation", command=bitwise_or).pack(pady=5)
+        ttk.Button(dialog, text="NOT Operation", command=bitwise_not).pack(pady=5)
+        
+    def show_histogram(self):
+        """Show histogram of the image"""
+        if self.original_image is None:
+            messagebox.showwarning("Warning", "Please select an image first!")
+            return
+            
+        # Create new window for histogram
+        hist_window = tk.Toplevel(self.root)
+        hist_window.title("Histogram")
+        hist_window.geometry("600x400")
+        
+        fig, ax = plt.subplots(figsize=(8, 6))
+        
+        if len(self.original_image.shape) == 3:
+            # Color image
+            colors = ('b', 'g', 'r')
+            for i, color in enumerate(colors):
+                hist = cv2.calcHist([self.original_image], [i], None, [256], [0, 256])
+                ax.plot(hist, color=color, label=f'Channel {color.upper()}')
+            ax.set_title('RGB Histogram')
+        else:
+            # Grayscale image
+            hist = cv2.calcHist([self.original_image], [0], None, [256], [0, 256])
+            ax.plot(hist, color='black')
+            ax.set_title('Grayscale Histogram')
+            
+        ax.set_xlabel('Pixel Intensity')
+        ax.set_ylabel('Frequency')
+        ax.legend()
+        
+        canvas = FigureCanvasTkAgg(fig, master=hist_window)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        
+    def convolution_filter(self):
+        """Apply convolution filters"""
+        if self.original_image is None:
+            messagebox.showwarning("Warning", "Please select an image first!")
+            return
+            
+        # Create dialog for filter selection
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Convolution Filters")
+        dialog.geometry("300x250")
+        
+        ttk.Label(dialog, text="Select convolution filter:").pack(pady=10)
+        
+        def apply_blur():
+            kernel = np.ones((5, 5), np.float32) / 25  # Mean filter
+            result = cv2.filter2D(self.original_image, -1, kernel)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def apply_sharpen():
+            kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])  # Sharpening filter
+            result = cv2.filter2D(self.original_image, -1, kernel)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def apply_edge_sobel():
+            gray = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2GRAY)
+            sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
+            sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
+            result = np.sqrt(sobelx*2 + sobely*2)
+            result = np.uint8(result)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def apply_edge_prewitt():
+            gray = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2GRAY)
+            kernelx = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
+            kernely = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
+            prewittx = cv2.filter2D(gray, -1, kernelx)
+            prewitty = cv2.filter2D(gray, -1, kernely)
+            result = np.sqrt(prewittx*2 + prewitty*2)
+            result = np.uint8(result)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        ttk.Button(dialog, text="Mean Filter (Blur)", command=apply_blur).pack(pady=5)
+        ttk.Button(dialog, text="Sharpening Filter", command=apply_sharpen).pack(pady=5)
+        ttk.Button(dialog, text="Edge Detection (Sobel)", command=apply_edge_sobel).pack(pady=5)
+        ttk.Button(dialog, text="Edge Detection (Prewitt)", command=apply_edge_prewitt).pack(pady=5)
+        
+    def morphology_operations(self):
+        """Perform morphological operations"""
+        if self.original_image is None:
+            messagebox.showwarning("Warning", "Please select an image first!")
+            return
+            
+        # Convert to binary first
+        gray = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2GRAY)
+        _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        # Create dialog for morphology operations
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Morphological Operations")
+        dialog.geometry("400x300")
+        
+        ttk.Label(dialog, text="Select morphological operation:").pack(pady=10)
+        ttk.Label(dialog, text="(Image will be converted to binary first)").pack()
+        
+        def apply_erosion_rect():
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+            result = cv2.erode(binary, kernel, iterations=1)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def apply_erosion_ellipse():
+            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+            result = cv2.erode(binary, kernel, iterations=1)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def apply_dilation_rect():
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+            result = cv2.dilate(binary, kernel, iterations=1)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def apply_dilation_ellipse():
+            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+            result = cv2.dilate(binary, kernel, iterations=1)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def apply_opening():
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+            result = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def apply_closing():
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+            result = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        ttk.Label(dialog, text="Erosion:", font=("Arial", 9, "bold")).pack(pady=(10, 0))
+        ttk.Button(dialog, text="Erosion (Rectangular SE)", command=apply_erosion_rect).pack(pady=2)
+        ttk.Button(dialog, text="Erosion (Ellipse SE)", command=apply_erosion_ellipse).pack(pady=2)
+        
+        ttk.Label(dialog, text="Dilation:", font=("Arial", 9, "bold")).pack(pady=(10, 0))
+        ttk.Button(dialog, text="Dilation (Rectangular SE)", command=apply_dilation_rect).pack(pady=2)
+        ttk.Button(dialog, text="Dilation (Ellipse SE)", command=apply_dilation_ellipse).pack(pady=2)
+        
+        ttk.Label(dialog, text="Combination:", font=("Arial", 9, "bold")).pack(pady=(10, 0))
+        ttk.Button(dialog, text="Opening", command=apply_opening).pack(pady=2)
+        ttk.Button(dialog, text="Closing", command=apply_closing).pack(pady=2)
+        
+    def reset_image(self):
+        """Reset to original image"""
+        if self.original_image is None:
+            messagebox.showwarning("Warning", "Please select an image first!")
+            return
+            
+        self.processed_image = None
+        self.processed_canvas.delete("all")
+        self.processed_canvas.create_text(200, 200, text="Image has been reset", anchor=tk.CENTER)
 
+def main():
+    root = tk.Tk()
+    app = ImagePro(root)
+    root.mainloop()
+
+if _name_ == "_main_":
+    main()
