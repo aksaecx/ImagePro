@@ -260,3 +260,96 @@ class ImagePro:
                 self.status_label.config(text=f"Loaded: {file_path.split('/')[-1]}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load image: {str(e)}")
+
+# ======================== BAGIAN 3 (Kontributor 3) ========================
+# Basic Image Processing (201-300)
+    def display_image(self, image, canvas):
+        """Display image on canvas with better visualization"""
+        if image is None:
+            return
+            
+        # Convert BGR to RGB for display
+        if len(image.shape) == 3:
+            display_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        else:
+            display_img = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB) if len(image.shape) == 2 else image
+            
+        # Resize image to fit canvas while maintaining aspect ratio
+        canvas_w = canvas.winfo_width() - 20
+        canvas_h = canvas.winfo_height() - 20
+        
+        h, w = display_img.shape[:2]
+        ratio = min(canvas_w/w, canvas_h/h)
+        new_w = int(w * ratio)
+        new_h = int(h * ratio)
+            
+        resized_img = cv2.resize(display_img, (new_w, new_h))
+        
+        # Convert to PIL Image and then to PhotoImage
+        pil_img = Image.fromarray(resized_img)
+        photo = ImageTk.PhotoImage(pil_img)
+        
+        # Clear canvas and display new image
+        canvas.delete("all")
+        canvas.create_image(canvas_w//2, canvas_h//2, image=photo, anchor=tk.CENTER)
+        canvas.image = photo  # Keep a reference
+        
+    def convert_grayscale(self):
+        """Convert image to grayscale"""
+        if self.original_image is None:
+            messagebox.showwarning("Warning", "Please select an image first!")
+            return
+            
+        gray_image = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2GRAY)
+        self.processed_image = gray_image
+        self.display_image(gray_image, self.processed_canvas)
+        
+    def convert_binary(self):
+        """Convert image to binary using Otsu's method"""
+        if self.original_image is None:
+            messagebox.showwarning("Warning", "Please select an image first!")
+            return
+            
+        # Convert to grayscale first
+        gray_image = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2GRAY)
+        
+        # Apply Otsu's thresholding
+        _, binary_image = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        self.processed_image = binary_image
+        self.display_image(binary_image, self.processed_canvas)
+        
+    def arithmetic_operations(self):
+        """Perform arithmetic operations"""
+        if self.original_image is None:
+            messagebox.showwarning("Warning", "Please select an image first!")
+            return
+            
+        # Create a simple dialog for arithmetic operations
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Arithmetic Operations")
+        dialog.geometry("300x200")
+        
+        ttk.Label(dialog, text="Select arithmetic operation:").pack(pady=10)
+        
+        def brightness_increase():
+            result = cv2.add(self.original_image, np.ones(self.original_image.shape, dtype=np.uint8) * 50)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def brightness_decrease():
+            result = cv2.subtract(self.original_image, np.ones(self.original_image.shape, dtype=np.uint8) * 50)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        def multiply():
+            result = cv2.multiply(self.original_image, np.ones(self.original_image.shape, dtype=np.uint8) * 1.5)
+            self.processed_image = result
+            self.display_image(result, self.processed_canvas)
+            dialog.destroy()
+            
+        ttk.Button(dialog, text="Increase Brightness (+50)", command=brightness_increase).pack(pady=5)
+        ttk.Button(dialog, text="Decrease Brightness (-50)", command=brightness_decrease).pack(pady=5)
+        ttk.Button(dialog, text="Multiply (×1.5)", command=multiply).pack(pady=5)
