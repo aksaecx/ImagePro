@@ -353,3 +353,5 @@ class ImagePro:
         ttk.Button(dialog, text="Increase Brightness (+50)", command=brightness_increase).pack(pady=5)
         ttk.Button(dialog, text="Decrease Brightness (-50)", command=brightness_decrease).pack(pady=5)
         ttk.Button(dialog, text="Multiply (×1.5)", command=multiply).pack(pady=5)
+
+
