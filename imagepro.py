@@ -1,5 +1,4 @@
-# ======================== BAGIAN 1 (Kontributor 1) ========================
-# Import libraries dan Class Definition (1-100)
+# ======================== BAGIAN 1 TAMPILAN (Kontributor 1) ========================
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import cv2
@@ -13,54 +12,88 @@ class ImagePro:
         self.root = root
         self.root.title("Image Pro - Professional Image Processing")
         self.root.geometry("1280x800")
-        self.root.configure(bg="#f0f0f0")
+        self.root.configure(bg="#1e1e2d")  # Dark background
         
-        # Style Configuration
         self.style = ttk.Style()
         self.style.theme_use('clam')
-        self.style.configure('TFrame', background="#f0f0f0")
-        self.style.configure('TLabel', background="#f0f0f0", font=('Helvetica', 10))
-        self.style.configure('TButton', font=('Helvetica', 10), padding=5)
-        self.style.configure('Title.TLabel', font=('Helvetica', 20, 'bold'), foreground="#2c3e50")
-        self.style.configure('Section.TLabelframe', font=('Helvetica', 11, 'bold'), borderwidth=2, relief="solid")
-        self.style.configure('Section.TLabelframe.Label', font=('Helvetica', 11, 'bold'))
-        self.style.map('TButton', 
-                      foreground=[('active', 'white'), ('!active', 'black')],
-                      background=[('active', '#3498db'), ('!active', '#ecf0f1')])
         
-        # Variables
+        self.bg_color = "#1e1e2d"
+        self.card_color = "#2a2a3a"
+        self.accent_color = "#4e8cff"
+        self.text_color = "#ffffff"
+        self.secondary_text = "#b0b0b0"
+        
+        self.style.configure('.', background=self.bg_color, foreground=self.text_color)
+        self.style.configure('TFrame', background=self.bg_color)
+        self.style.configure('TLabel', background=self.bg_color, foreground=self.text_color, 
+                           font=('Segoe UI', 10))
+        self.style.configure('TButton', font=('Segoe UI', 10, 'bold'), padding=8,
+                           background="#3a3a4a", foreground=self.text_color,
+                           borderwidth=0)
+        self.style.configure('Title.TLabel', font=('Segoe UI', 24, 'bold'), 
+                           foreground=self.accent_color)
+        self.style.configure('Section.TLabelframe', font=('Segoe UI', 12, 'bold'), 
+                           borderwidth=0, relief="flat", background=self.bg_color,
+                           foreground=self.accent_color)
+        self.style.configure('Section.TLabelframe.Label', font=('Segoe UI', 12, 'bold'),
+                           foreground=self.accent_color)
+        self.style.configure('Accent.TButton', background=self.accent_color,
+                           foreground="#ffffff")
+        self.style.configure('TEntry', fieldbackground=self.card_color,
+                           foreground=self.text_color, insertcolor=self.text_color)
+        
+        self.style.map('TButton',
+                      background=[('active', '#4a4a5a'), ('!active', '#3a3a4a')],
+                      foreground=[('active', self.text_color), ('!active', self.text_color)])
+        self.style.map('Accent.TButton',
+                      background=[('active', '#3d7ae5'), ('!active', self.accent_color)],
+                      foreground=[('active', '#ffffff'), ('!active', '#ffffff')])
+        
         self.original_image = None
         self.processed_image = None
         self.current_image = None
         
-        # Setup GUI
         self.setup_gui()
         
     def setup_gui(self):
-        # Main frame
         main_frame = ttk.Frame(self.root, padding="20")
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
-        # Title
-        title_frame = ttk.Frame(main_frame)
-        title_frame.grid(row=0, column=0, columnspan=3, pady=(0, 20))
+        title_frame = ttk.Frame(main_frame, style='TFrame')
+        title_frame.grid(row=0, column=0, columnspan=3, pady=(0, 30))
         
-        title_label = ttk.Label(title_frame, text="IMAGE PROCESSING PRO", style='Title.TLabel')
+        title_label = ttk.Label(title_frame, 
+                              text="IMAGE PROCESSING PRO", 
+                              style='Title.TLabel')
         title_label.pack()
         
-        subtitle_label = ttk.Label(title_frame, text="Professional Digital Image Processing Tool", font=('Helvetica', 12))
-        subtitle_label.pack()
+        subtitle_label = ttk.Label(title_frame, 
+                                 text="By : Evaleona - Aksa - Rifai - Safri", 
+                                 font=('Segoe UI', 12), 
+                                 foreground=self.secondary_text)
+        subtitle_label.pack(pady=(5, 0))
         
-        # Input section
-        input_frame = ttk.LabelFrame(main_frame, text=" Image Input ", style='Section.TLabelframe')
-        input_frame.grid(row=1, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 15))
+        input_frame = ttk.LabelFrame(main_frame, 
+                                   text=" IMAGE INPUT ", 
+                                   style='Section.TLabelframe',
+                                   padding=(15, 10))
+        input_frame.grid(row=1, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 20))
         
-        btn_load = ttk.Button(input_frame, text="Load Image", command=self.load_image, style='Accent.TButton')
-        btn_load.grid(row=0, column=0, padx=(0, 10), pady=5)
+        inner_input_frame = ttk.Frame(input_frame, style='TFrame')
+        inner_input_frame.pack(fill=tk.BOTH, expand=True)
         
-        self.file_label = ttk.Label(input_frame, text="No image selected", font=('Helvetica', 9))
+        btn_load = ttk.Button(inner_input_frame, 
+                             text="📁 Load Image", 
+                             command=self.load_image, 
+                             style='Accent.TButton')
+        btn_load.grid(row=0, column=0, padx=(0, 15), pady=5)
+        
+        self.file_label = ttk.Label(inner_input_frame, 
+                                  text="No image selected", 
+                                  font=('Segoe UI', 9),
+                                  foreground=self.secondary_text)
         self.file_label.grid(row=0, column=1, sticky=tk.W)
-
+        
 # ======================== BAGIAN 2 (Kontributor 2) ========================
 # GUI Setup dan Image Loading (101-200)
         # Processing section
@@ -344,15 +377,8 @@ class ImagePro:
             self.display_image(result, self.processed_canvas)
             dialog.destroy()
             
-        def multiply():
-            result = cv2.multiply(self.original_image, np.ones(self.original_image.shape, dtype=np.uint8) * 1.5)
-            self.processed_image = result
-            self.display_image(result, self.processed_canvas)
-            dialog.destroy()
-            
         ttk.Button(dialog, text="Increase Brightness (+50)", command=brightness_increase).pack(pady=5)
         ttk.Button(dialog, text="Decrease Brightness (-50)", command=brightness_decrease).pack(pady=5)
-        ttk.Button(dialog, text="Multiply (×1.5)", command=multiply).pack(pady=5)
 
 # ======================== BAGIAN 4 (Kontributor 4) ========================
 # Advanced Image Processing dan Main Function (301-end)
