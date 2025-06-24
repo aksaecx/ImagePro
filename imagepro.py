@@ -63,7 +63,7 @@ class ImagePro:
         title_frame.grid(row=0, column=0, columnspan=3, pady=(0, 30))
         
         title_label = ttk.Label(title_frame, 
-                              text="IMAGE PROCESSING PRO", 
+                              text="IMAGE PRO", 
                               style='Title.TLabel')
         title_label.pack()
         
@@ -370,15 +370,8 @@ class ImagePro:
             self.processed_image = result
             self.display_image(result, self.processed_canvas)
             dialog.destroy()
-            
-        def brightness_decrease():
-            result = cv2.subtract(self.original_image, np.ones(self.original_image.shape, dtype=np.uint8) * 50)
-            self.processed_image = result
-            self.display_image(result, self.processed_canvas)
-            dialog.destroy()
-            
+                       
         ttk.Button(dialog, text="Increase Brightness (+50)", command=brightness_increase).pack(pady=5)
-        ttk.Button(dialog, text="Decrease Brightness (-50)", command=brightness_decrease).pack(pady=5)
 
 # ======================== BAGIAN 4 (Kontributor 4) ========================
 # Advanced Image Processing dan Main Function (301-end)
@@ -402,22 +395,22 @@ class ImagePro:
             self.display_image(result, self.processed_canvas)
             dialog.destroy()
             
-        def bitwise_or():
-            mask = np.ones(self.original_image.shape, dtype=np.uint8) * 50
-            result = cv2.bitwise_or(self.original_image, mask)
-            self.processed_image = result
-            self.display_image(result, self.processed_canvas)
-            dialog.destroy()
+        #def bitwise_or():
+            #mask = np.ones(self.original_image.shape, dtype=np.uint8) * 50
+            #result = cv2.bitwise_or(self.original_image, mask)
+            #self.processed_image = result
+            #self.display_image(result, self.processed_canvas)
+            #dialog.destroy()
             
-        def bitwise_not():
-            result = cv2.bitwise_not(self.original_image)
-            self.processed_image = result
-            self.display_image(result, self.processed_canvas)
-            dialog.destroy()
+        #def bitwise_not():
+            #result = cv2.bitwise_not(self.original_image)
+            #self.processed_image = result
+            #self.display_image(result, self.processed_canvas)
+            #dialog.destroy()
             
         ttk.Button(dialog, text="AND Operation", command=bitwise_and).pack(pady=5)
-        ttk.Button(dialog, text="OR Operation", command=bitwise_or).pack(pady=5)
-        ttk.Button(dialog, text="NOT Operation", command=bitwise_not).pack(pady=5)
+        #ttk.Button(dialog, text="OR Operation", command=bitwise_or).pack(pady=5)
+        #ttk.Button(dialog, text="NOT Operation", command=bitwise_not).pack(pady=5)
         
     def show_histogram(self):
         """Show histogram of the image"""
@@ -539,28 +532,28 @@ class ImagePro:
             self.display_image(result, self.processed_canvas)
             dialog.destroy()
             
-        def apply_dilation_rect():
+        #def apply_dilation_rect():
             kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
             result = cv2.dilate(binary, kernel, iterations=1)
             self.processed_image = result
             self.display_image(result, self.processed_canvas)
             dialog.destroy()
             
-        def apply_dilation_ellipse():
+        #def apply_dilation_ellipse():
             kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
             result = cv2.dilate(binary, kernel, iterations=1)
             self.processed_image = result
             self.display_image(result, self.processed_canvas)
             dialog.destroy()
             
-        def apply_opening():
+        #def apply_opening():
             kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
             result = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel)
             self.processed_image = result
             self.display_image(result, self.processed_canvas)
             dialog.destroy()
             
-        def apply_closing():
+        #def apply_closing():
             kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
             result = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel)
             self.processed_image = result
@@ -569,15 +562,15 @@ class ImagePro:
             
         ttk.Label(dialog, text="Erosion:", font=("Arial", 9, "bold")).pack(pady=(10, 0))
         ttk.Button(dialog, text="Erosion (Rectangular SE)", command=apply_erosion_rect).pack(pady=2)
-        ttk.Button(dialog, text="Erosion (Ellipse SE)", command=apply_erosion_ellipse).pack(pady=2)
+        ttk.Button(dialog, text="Erosion ", command=apply_erosion_ellipse).pack(pady=2)
         
-        ttk.Label(dialog, text="Dilation:", font=("Arial", 9, "bold")).pack(pady=(10, 0))
-        ttk.Button(dialog, text="Dilation (Rectangular SE)", command=apply_dilation_rect).pack(pady=2)
-        ttk.Button(dialog, text="Dilation (Ellipse SE)", command=apply_dilation_ellipse).pack(pady=2)
+        #ttk.Label(dialog, text="Dilation:", font=("Arial", 9, "bold")).pack(pady=(10, 0))
+        #ttk.Button(dialog, text="Dilation (Rectangular SE)", command=apply_dilation_rect).pack(pady=2)
+        #ttk.Button(dialog, text="Dilation (Ellipse SE)", command=apply_dilation_ellipse).pack(pady=2)
         
-        ttk.Label(dialog, text="Combination:", font=("Arial", 9, "bold")).pack(pady=(10, 0))
-        ttk.Button(dialog, text="Opening", command=apply_opening).pack(pady=2)
-        ttk.Button(dialog, text="Closing", command=apply_closing).pack(pady=2)
+        #ttk.Label(dialog, text="Combination:", font=("Arial", 9, "bold")).pack(pady=(10, 0))
+        #ttk.Button(dialog, text="Opening", command=apply_opening).pack(pady=2)
+        #ttk.Button(dialog, text="Closing", command=apply_closing).pack(pady=2)
         
     def reset_image(self):
         """Reset to original image"""
@@ -596,3 +589,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+   
